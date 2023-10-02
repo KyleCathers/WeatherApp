@@ -1,6 +1,11 @@
 import './style.css';
 
-const container = document.createElement('div');
-container.id = 'test2';
+import { pageInit } from './container';
+import { getCurrentWeather, getForecast } from './weather';
 
-document.body.appendChild(container);
+//getCurrentWeather();
+//getForecast();
+
+document.body.appendChild(pageInit());
+
+//document.body.appendChild(pageInit());
