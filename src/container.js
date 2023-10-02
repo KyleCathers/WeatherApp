@@ -1,4 +1,7 @@
-import searchLogo from './images/searchLogo.png';
+import searchIcon from './images/searchIcon.png';
+import refreshIconAnimated from './images/refreshIconAnimated.gif';
+import refreshIcon from './images/refreshIcon.png';
+
 
 let pageInit = () => {
     // main container
@@ -42,22 +45,26 @@ let pageInit = () => {
     const degreeSection = document.createElement('div');
     degreeSection.setAttribute('id', 'degree-section');
 
+    const degreeText = document.createElement('div');
+    degreeText.setAttribute('id', 'degree-text');
+    degreeText.innerText = '°C/°F'
+
     const degreeButton = document.createElement('label');
     degreeButton.setAttribute('id', 'degree-button');
     degreeButton.setAttribute('class', 'switch');
     degreeButton.innerHTML =    `<input type="checkbox" checked>
                                  <span class="slider round"></span>`;
 
-    const degreeText = document.createElement('div');
-    degreeText.setAttribute('id', 'degree-text');
-    degreeText.innerText = '°C/°F'
-
-    degreeSection.appendChild(degreeButton);
     degreeSection.appendChild(degreeText);
+    degreeSection.appendChild(degreeButton);
+
+    const refreshSection = document.createElement('div');
+    refreshSection.setAttribute('id', 'refresh-section');
 
     rightSection.appendChild(dateSection);
     rightSection.appendChild(timeSection);
     rightSection.appendChild(degreeSection);
+    rightSection.appendChild(refreshSection);
 
 
 
@@ -65,16 +72,10 @@ let pageInit = () => {
     topSection.appendChild(leftSection);
     topSection.appendChild(rightSection);
 
-    // Time title (today, hourly, forecast)
-    // Weather, icon, temperature, feels like, humidiy, wind, UV
     const middleSection = document.createElement('div');
     middleSection.setAttribute('id', 'middle-section');
 
-    // if middleSection = today -> append today
-    // if middleSection = hourly -> append hourly
-    // if middleSection = forecast -> append forecast (14 days)
-
-    middleSection.appendChild(todayContent());
+    middleSection.appendChild(todayContent()); // default to todays content
 
 
 
@@ -125,6 +126,22 @@ let pageInit = () => {
     container.appendChild(middleSection);
     container.appendChild(bottomSection);
 
+    todaySelect.addEventListener('click', () => {
+        middleSection.innerHTML = ""; // kill all children
+        middleSection.appendChild(todayContent());
+    });
+
+    hourlySelect.addEventListener('click', () => {
+        middleSection.innerHTML = ""; // kill all children
+        middleSection.appendChild(hourlyContent());
+    });
+
+    forecastSelect.addEventListener('click', () => {
+        middleSection.innerHTML = ""; // kill all children
+        middleSection.appendChild(forecastContent());
+    });
+
+
     return container;
 }
 
@@ -170,11 +187,29 @@ let todayContent = () => {
 }
 
 let hourlyContent = () => {
+    const middleContainer = document.createElement('div');
+    middleContainer.setAttribute('id', 'middle-container-hourly');
 
+    const title = document.createElement('div');
+    title.innerText = 'Hourly';
+    title.setAttribute('id', 'title');
+
+    middleContainer.appendChild(title);
+
+    return middleContainer;
 }
 
 let forecastContent = () => {
+    const middleContainer = document.createElement('div');
+    middleContainer.setAttribute('id', 'middle-container-forecast');
 
+    const title = document.createElement('div');
+    title.innerText = 'Forecast';
+    title.setAttribute('id', 'title');
+
+    middleContainer.appendChild(title);
+
+    return middleContainer;
 }
 
 
