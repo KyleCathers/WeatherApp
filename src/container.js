@@ -2,6 +2,13 @@ import searchIcon from './images/searchIcon.png';
 import refreshIconAnimated from './images/refreshIconAnimated.gif';
 import refreshIcon from './images/refreshIcon.png';
 
+import { getCurrentWeather, getForecast } from './weather';
+
+let state = 'Today';
+let tempState = 'C';
+
+let currentWeatherObj = await getCurrentWeather();
+console.log(currentWeatherObj)
 
 let pageInit = () => {
     // main container
@@ -52,8 +59,15 @@ let pageInit = () => {
     const degreeButton = document.createElement('label');
     degreeButton.setAttribute('id', 'degree-button');
     degreeButton.setAttribute('class', 'switch');
-    degreeButton.innerHTML =    `<input type="checkbox" checked>
-                                 <span class="slider round"></span>`;
+
+    const checkBox = document.createElement('input');
+    checkBox.setAttribute('type', 'checkbox');
+
+    const slider = document.createElement('span');
+    slider.setAttribute('class', 'slider round');
+
+    degreeButton.appendChild(checkBox);
+    degreeButton.appendChild(slider);
 
     degreeSection.appendChild(degreeText);
     degreeSection.appendChild(degreeButton);
@@ -66,9 +80,6 @@ let pageInit = () => {
     rightSection.appendChild(degreeSection);
     rightSection.appendChild(refreshSection);
 
-
-
-
     topSection.appendChild(leftSection);
     topSection.appendChild(rightSection);
 
@@ -76,8 +87,6 @@ let pageInit = () => {
     middleSection.setAttribute('id', 'middle-section');
 
     middleSection.appendChild(todayContent()); // default to todays content
-
-
 
     // Time selection, search bar
     const bottomSection = document.createElement('div');
@@ -127,19 +136,57 @@ let pageInit = () => {
     container.appendChild(bottomSection);
 
     todaySelect.addEventListener('click', () => {
+        state = 'Today';
         middleSection.innerHTML = ""; // kill all children
         middleSection.appendChild(todayContent());
+        setTodayData();
     });
 
     hourlySelect.addEventListener('click', () => {
+        state = 'Hourly';
         middleSection.innerHTML = ""; // kill all children
         middleSection.appendChild(hourlyContent());
+        setHourlyData();
     });
 
     forecastSelect.addEventListener('click', () => {
+        state = 'Forecast';
         middleSection.innerHTML = ""; // kill all children
         middleSection.appendChild(forecastContent());
+        setForecastData();
     });
+
+    refreshSection.addEventListener('click', async () => {
+        if (state === 'Today') {
+            currentWeatherObj = await getCurrentWeather();
+            setTodayData();
+        } else if (state === 'Hourly') {
+            currentWeatherObj = await getCurrentWeather();
+            setHourlyData();
+        } else {
+            currentWeatherObj = await getCurrentWeather();
+            setForecastData();
+        }
+    });
+
+    checkBox.addEventListener('click', () => {
+        if(checkBox.checked) {
+            tempState = 'F';
+        } else {
+            tempState = 'C';
+        }
+
+        if (state === 'Today') {
+            setTodayData();
+        } else if (state === 'Hourly') {
+            setHourlyData();
+        } else {
+            setForecastData();
+        }
+
+    })
+
+    // if temp button is pressed changed temp state and call setData function
 
 
     return container;
@@ -156,7 +203,7 @@ let todayContent = () => {
     const weatherText = document.createElement('div');
     weatherText.setAttribute('id', 'weather-text');
 
-    const weatherLogo = document.createElement('div');
+    const weatherLogo = new Image();
     weatherLogo.setAttribute('id', 'weather-logo');
 
     const currentTemp = document.createElement('div');
@@ -212,5 +259,38 @@ let forecastContent = () => {
     return middleContainer;
 }
 
+let setTodayData = () => {
+    const weatherText = document.querySelector('#weather-text');
+    const weatherLogo = document.querySelector('#weather-logo');
+    const currentTemp = document.querySelector('#current-temp');
+    const feelsLike = document.querySelector('#feels-like');
+    const humidity = document.querySelector('#humidity');
+    const wind = document.querySelector('#wind');
+    const UV = document.querySelector('#UV');
 
-export { pageInit };
+
+    weatherText.innerText = currentWeatherObj.weather;
+    weatherLogo.src = currentWeatherObj.icon;
+    humidity.innerText = `${currentWeatherObj.humidity}% Humidity`;
+    wind.innerText = `Wind Speed: ${currentWeatherObj.wind} km/h`;
+    UV.innerText = `UV: ${currentWeatherObj.UV}`;
+
+    if(tempState === 'C') {
+        currentTemp.innerText = `Temp: ${currentWeatherObj.temp_c}°C`;
+        feelsLike.innerText = `Feels Like: ${currentWeatherObj.feelslike_c}°C`;
+    } else {
+        currentTemp.innerText = `Temp: ${currentWeatherObj.temp_f}°C`;
+        feelsLike.innerText = `Feels Like: ${currentWeatherObj.feelslike_f}°F`;
+    }
+
+}
+
+let setHourlyData = () => {
+
+}
+
+let setForecastData = () => {
+
+}
+
+export { pageInit, setTodayData };

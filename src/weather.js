@@ -10,7 +10,7 @@ let weatherKey = 'd2a54b121f6748a786113745233009';
 const getCurrentWeather = async (location = 'Vancouver') => {
     let response = await fetch(`https://api.weatherapi.com/v1/current.json?key=${weatherKey}&q=${location}`);
     let data = await response.json();
-    console.log(data);
+    //console.log(data);
     return parseCurrentWeather(data);
 }
 
@@ -34,10 +34,10 @@ const parseCurrentWeather = dataObject => {
     let city = location.name;
     let region = location.region; // province, state ...
 
-    let parsedData = { temp_c, temp_f, feelslike_c, feelslike_f, humidity, weather, icon,
-        country, time, city, region };
+    let parsedData = { temp_c, temp_f, feelslike_c, feelslike_f, humidity, weather, icon, 
+        wind, UV, country, time, city, region };
     
-    console.log(parsedData);
+    //console.log(parsedData);
 
     return parsedData;
 }

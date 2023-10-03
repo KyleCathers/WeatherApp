@@ -3,7 +3,7 @@ body, html {
   padding: 0;
   height: 100vh;
   width: 100vw;
-  color: #2d2d2d;
+  color: rgb(54, 54, 54);
   font-size: 1.5rem;
   font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: linear-gradient(#000024 0%, #000079 35%, #00d4ff 100%);
@@ -93,6 +93,28 @@ body {
   width: 100%;
   flex: 1 1 auto;
 }
+
+#middle-container-today {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.3rem;
+  gap: 5px;
+}
+
+#title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-decoration: underline;
+  padding-bottom: 10px;
+}
+
+#weather-logo {
+  width: 128px;
+}
+
 
 #bottom-section {
   flex-direction: column;
