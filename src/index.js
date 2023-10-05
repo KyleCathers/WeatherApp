@@ -1,11 +1,11 @@
 import './style.css';
 
-import { pageInit, setTodayData } from './container';
+import { pageInit, setData } from './container';
 
 //getCurrentWeather();
 //getForecast();
 
 document.body.appendChild(pageInit());
-setTodayData();
+setData();
 
 //document.body.appendChild(pageInit());

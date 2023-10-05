@@ -1,16 +1,16 @@
-import searchIcon from './images/searchIcon.png';
-import refreshIconAnimated from './images/refreshIconAnimated.gif';
-import refreshIcon from './images/refreshIcon.png';
+import { format } from 'date-fns';
 
 import { getCurrentWeather, getForecast } from './weather';
 
 let state = 'Today';
 let tempState = 'C';
+let currentLocation = 'Vancouver'
 
-let currentWeatherObj = await getCurrentWeather();
+let currentWeatherObj = await getCurrentWeather(currentLocation);
 console.log(currentWeatherObj)
 
 let pageInit = () => {
+
     // main container
     const container = document.createElement('div');
     container.setAttribute('id', 'container');
@@ -24,15 +24,12 @@ let pageInit = () => {
 
     const citySection = document.createElement('div');
     citySection.setAttribute('id', 'city-section');
-    citySection.innerText = 'Vancouver';
 
     const regionSection = document.createElement('div');
     regionSection.setAttribute('id', 'region-section');
-    regionSection.innerText = 'British Colombia,';
 
     const countrySection = document.createElement('div');
     countrySection.setAttribute('id', 'country-section');
-    countrySection.innerText = 'Canada';
 
     leftSection.appendChild(citySection);
     leftSection.appendChild(regionSection);
@@ -43,11 +40,9 @@ let pageInit = () => {
 
     const dateSection = document.createElement('div');
     dateSection.setAttribute('id', 'date-section');
-    dateSection.innerText = 'Sunday, Oct 21';
 
     const timeSection = document.createElement('div');
     timeSection.setAttribute('id', 'time-section');
-    timeSection.innerText = '5:56PM';
 
     const degreeSection = document.createElement('div');
     degreeSection.setAttribute('id', 'degree-section');
@@ -156,17 +151,18 @@ let pageInit = () => {
         setForecastData();
     });
 
-    refreshSection.addEventListener('click', async () => {
-        if (state === 'Today') {
-            currentWeatherObj = await getCurrentWeather();
-            setTodayData();
-        } else if (state === 'Hourly') {
-            currentWeatherObj = await getCurrentWeather();
-            setHourlyData();
-        } else {
-            currentWeatherObj = await getCurrentWeather();
-            setForecastData();
+    refreshSection.addEventListener('click', async (e) => {
+        e.preventDefault();
+        try {
+            currentWeatherObj = await getCurrentWeather(currentLocation);
+            console.log(currentWeatherObj)
+        } catch (error) {
+            alert(`Invalid location`);
+            searchInput.value = "";
+            return;
         }
+
+        setData();
     });
 
     checkBox.addEventListener('click', () => {
@@ -186,8 +182,24 @@ let pageInit = () => {
 
     })
 
-    // if temp button is pressed changed temp state and call setData function
+    searchBar.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if(searchInput.value.trim() !== "") { // pause on empty inputs
+            currentLocation = searchInput.value;
 
+            try {
+                currentWeatherObj = await getCurrentWeather(currentLocation);
+            } catch (error) {
+                alert(`Invalid location`);
+                searchInput.value = "";
+                return;
+            }
+
+            setData();
+
+            searchInput.value = "";
+        }
+    })
 
     return container;
 }
@@ -293,4 +305,56 @@ let setForecastData = () => {
 
 }
 
-export { pageInit, setTodayData };
+let setLocationData = () => {
+    const citySection = document.querySelector('#city-section');
+    const regionSection = document.querySelector('#region-section');
+    const countrySection = document.querySelector('#country-section');
+
+    citySection.innerText = currentWeatherObj.city;
+    regionSection.innerText = currentWeatherObj.region;
+
+    if(currentWeatherObj.country === "United States of America") {
+        countrySection.innerText = "USA";
+    } else {
+        countrySection.innerText = currentWeatherObj.country;
+    }
+}
+
+let setTimeData = () => {
+    const dateSection = document.querySelector('#date-section');
+    const timeSection = document.querySelector('#time-section');
+
+    let timeStamp = currentWeatherObj.time;      // e.g. 2023-10-05 11:31
+
+    let year = Number(timeStamp.slice(0, 4));    // e.g. 2023
+    let month = Number(timeStamp.slice(5,7));    // e.g. 10
+    let day = Number(timeStamp.slice(8, 10));    // e.g. 5
+
+    let dayName = format(new Date(year, month - 1, day), 'EEEE');
+    let monthName = format(new Date(year, month - 1, day), 'LLL');
+
+    let time = timeStamp.slice(11);
+    let hour = time.split(':')[0];
+    let minute = time.split(':')[1];
+    let AMPM = (hour < 12) ? 'AM' : 'PM';
+    
+    if(hour > 12) hour -= 12;
+
+    dateSection.innerText = `${dayName}, ${monthName} ${day}`;
+    timeSection.innerText = `${hour}:${minute}${AMPM}`;
+}
+
+let setData = () => {
+    setLocationData();
+    setTimeData();
+
+    if (state === 'Today') {
+        setTodayData();
+    } else if (state === 'Hourly') {
+        setHourlyData();
+    } else {
+        setForecastData();
+    }
+}
+
+export { pageInit, setData };

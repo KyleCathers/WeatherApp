@@ -7,10 +7,9 @@
 
 let weatherKey = 'd2a54b121f6748a786113745233009';
 
-const getCurrentWeather = async (location = 'Vancouver') => {
+const getCurrentWeather = async (location) => {
     let response = await fetch(`https://api.weatherapi.com/v1/current.json?key=${weatherKey}&q=${location}`);
     let data = await response.json();
-    //console.log(data);
     return parseCurrentWeather(data);
 }
 
