@@ -41,14 +41,14 @@ const parseCurrentWeather = dataObject => {
     return parsedData;
 }
 
-// 14 day forecast
-const getForecast = async (location = 'Vancouver') => {
-    let response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${weatherKey}&q=${location}&days=15`);
+// 7 day forecast
+const getForecast = async location => {
+    let response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${weatherKey}&q=${location}&days=8`);
     let data = await response.json();
 
     let forecast = data.forecast.forecastday;
 
-    // console.log(forecast);
+    console.log(forecast);
 
     return parseForecast(forecast);
 }
@@ -57,9 +57,44 @@ const parseForecast = forecast => {
 
     let parsedForecast = forecast;
 
-    console.log(parsedForecast);
+    //console.log(parsedForecast);
 
     return parsedForecast;
 }
 
-export { getCurrentWeather, getForecast };
+const getHourly = async (location) => {
+    // get current hour
+    let currentWeatherObj = await getCurrentWeather(location);
+    let timeStamp = currentWeatherObj.time;
+    let currentHour = Number(timeStamp.slice(11).split(':')[0]);
+
+    let response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${weatherKey}&q=${location}&days=2`);
+    let data = await response.json();
+
+    let forecast = data.forecast.forecastday;
+
+    let forecastArray = (forecast['0'].hour).concat(forecast['1'].hour);
+    let allHourlyData = forecastArray.slice(currentHour + 1, currentHour + 13); // get next 12 hours
+
+
+    // get hourly log of temperature, weather, and chance of rain
+    let parsedHourly = [];
+
+    allHourlyData.forEach((hour) => {
+        let filteredHour = {
+                            "hour" : hour.time,
+                            "rain" : hour.chance_of_rain,
+                            "weather" : hour.condition.text,
+                            "logo" : hour.condition.icon,
+                            "temp_c" : hour.temp_c,
+                            "temp_f" : hour.temp_f
+                           };
+        parsedHourly.push(filteredHour);
+    })
+
+    console.log(parsedHourly);
+
+    return parsedHourly;
+}
+
+export { getCurrentWeather, getForecast, getHourly };

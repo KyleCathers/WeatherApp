@@ -1,13 +1,12 @@
 import { format } from 'date-fns';
-
-import { getCurrentWeather, getForecast } from './weather';
+import { getCurrentWeather, getForecast, getHourly } from './weather';
 
 let state = 'Today';
 let tempState = 'C';
-let currentLocation = 'Vancouver'
+let currentLocation = 'Vancouver';
 
 let currentWeatherObj = await getCurrentWeather(currentLocation);
-console.log(currentWeatherObj)
+let hourlyWeatherObj = await getHourly(currentLocation);
 
 let pageInit = () => {
 
@@ -141,6 +140,7 @@ let pageInit = () => {
         state = 'Hourly';
         middleSection.innerHTML = ""; // kill all children
         middleSection.appendChild(hourlyContent());
+        console.log(hourlyWeatherObj);
         setHourlyData();
     });
 
@@ -155,6 +155,7 @@ let pageInit = () => {
         e.preventDefault();
         try {
             currentWeatherObj = await getCurrentWeather(currentLocation);
+            hourlyWeatherObj = await getHourly(currentLocation);
             console.log(currentWeatherObj)
         } catch (error) {
             alert(`Invalid location`);
@@ -189,6 +190,7 @@ let pageInit = () => {
 
             try {
                 currentWeatherObj = await getCurrentWeather(currentLocation);
+                hourlyWeatherObj = await getHourly(currentLocation);
             } catch (error) {
                 alert(`Invalid location`);
                 searchInput.value = "";
@@ -204,6 +206,7 @@ let pageInit = () => {
     return container;
 }
 
+// generate DOM elements for today tab
 let todayContent = () => {
     const middleContainer = document.createElement('div');
     middleContainer.setAttribute('id', 'middle-container-today');
@@ -245,6 +248,7 @@ let todayContent = () => {
     return middleContainer;
 }
 
+// generate DOM elements for hourly tab
 let hourlyContent = () => {
     const middleContainer = document.createElement('div');
     middleContainer.setAttribute('id', 'middle-container-hourly');
@@ -253,11 +257,14 @@ let hourlyContent = () => {
     title.innerText = 'Hourly';
     title.setAttribute('id', 'title');
 
+
+
     middleContainer.appendChild(title);
 
     return middleContainer;
 }
 
+// generate DOM elements for forecast tab
 let forecastContent = () => {
     const middleContainer = document.createElement('div');
     middleContainer.setAttribute('id', 'middle-container-forecast');
@@ -271,6 +278,7 @@ let forecastContent = () => {
     return middleContainer;
 }
 
+// append weather data to today tab
 let setTodayData = () => {
     const weatherText = document.querySelector('#weather-text');
     const weatherLogo = document.querySelector('#weather-logo');
@@ -291,20 +299,23 @@ let setTodayData = () => {
         currentTemp.innerText = `Temp: ${currentWeatherObj.temp_c}°C`;
         feelsLike.innerText = `Feels Like: ${currentWeatherObj.feelslike_c}°C`;
     } else {
-        currentTemp.innerText = `Temp: ${currentWeatherObj.temp_f}°C`;
+        currentTemp.innerText = `Temp: ${currentWeatherObj.temp_f}°F`;
         feelsLike.innerText = `Feels Like: ${currentWeatherObj.feelslike_f}°F`;
     }
 
 }
 
+// append weather data to hourly tab
 let setHourlyData = () => {
 
 }
 
+// append weather data to forecast tab
 let setForecastData = () => {
 
 }
 
+// append location data to header
 let setLocationData = () => {
     const citySection = document.querySelector('#city-section');
     const regionSection = document.querySelector('#region-section');
@@ -320,6 +331,7 @@ let setLocationData = () => {
     }
 }
 
+// append time data to header
 let setTimeData = () => {
     const dateSection = document.querySelector('#date-section');
     const timeSection = document.querySelector('#time-section');
@@ -344,6 +356,7 @@ let setTimeData = () => {
     timeSection.innerText = `${hour}:${minute}${AMPM}`;
 }
 
+// appends lcoation, time, and today/hourly/forecast tab data
 let setData = () => {
     setLocationData();
     setTimeData();
