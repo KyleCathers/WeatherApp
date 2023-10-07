@@ -1,5 +1,7 @@
 import { format } from 'date-fns';
 import { getCurrentWeather, getForecast, getHourly } from './weather';
+import leftArrowIcon from './images/leftArrowIcon.png';
+import rightArrowIcon from './images/rightArrowIcon.png';
 
 let state = 'Today';
 let tempState = 'C';
@@ -257,9 +259,64 @@ let hourlyContent = () => {
     title.innerText = 'Hourly';
     title.setAttribute('id', 'title');
 
+    const hourlyContentWrapper = document.createElement('div');
+    hourlyContentWrapper.setAttribute('id', 'hourly-content-wrapper');
 
+    const leftArrow = new Image();
+    leftArrow.src = leftArrowIcon;
+    leftArrow.setAttribute('id', 'left-arrow');
+    leftArrow.addEventListener('click', left);
+
+    const hourlyContent = document.createElement('div');
+    hourlyContent.setAttribute('id', 'hourly-content');
+
+
+    let weatherWrapper = [];
+    let weatherHour = [];
+    let weatherTemp = [];
+    let weatherIcon = [];
+    let weatherRain = [];
+
+    for(let i = 0; i < 12; i++) {
+        weatherWrapper[i] = document.createElement('div');
+        weatherWrapper[i].setAttribute('class', 'weather-wrapper');
+        weatherWrapper[i].setAttribute('id', `weather-wrapper-${i}`);
+
+        weatherHour[i] = document.createElement('div');
+        weatherHour[i].setAttribute('class', 'weather-hour');
+        weatherHour[i].setAttribute('id', `weather-hour-${i}`);
+
+        weatherTemp[i] = document.createElement('div');
+        weatherTemp[i].setAttribute('class', 'weather-temp');
+        weatherTemp[i].setAttribute('id', `weather-temp-${i}`);
+
+        weatherIcon[i] = new Image();
+        weatherIcon[i].setAttribute('class', 'weather-icon');
+        weatherIcon[i].setAttribute('id', `weather-icon-${i}`);
+
+        weatherRain[i] = document.createElement('div');
+        weatherRain[i].setAttribute('class', 'weather-rain');
+        weatherRain[i].setAttribute('id', `weather-rain-${i}`);
+
+        weatherWrapper[i].appendChild(weatherHour[i]);
+        weatherWrapper[i].appendChild(weatherTemp[i]);
+        weatherWrapper[i].appendChild(weatherIcon[i]);
+        weatherWrapper[i].appendChild(weatherRain[i]);
+
+        hourlyContent.appendChild(weatherWrapper[i]);
+    }
+
+    const rightArrow = new Image();
+    rightArrow.src = rightArrowIcon;
+    rightArrow.setAttribute('id', 'right-arrow');
+    rightArrow.addEventListener('click', right);
+
+    hourlyContentWrapper.appendChild(leftArrow);
+    hourlyContentWrapper.appendChild(hourlyContent);
+    hourlyContentWrapper.appendChild(rightArrow);
 
     middleContainer.appendChild(title);
+    middleContainer.appendChild(hourlyContentWrapper);
 
     return middleContainer;
 }
@@ -288,7 +345,6 @@ let setTodayData = () => {
     const wind = document.querySelector('#wind');
     const UV = document.querySelector('#UV');
 
-
     weatherText.innerText = currentWeatherObj.weather;
     weatherLogo.src = currentWeatherObj.icon;
     humidity.innerText = `${currentWeatherObj.humidity}% Humidity`;
@@ -308,6 +364,47 @@ let setTodayData = () => {
 // append weather data to hourly tab
 let setHourlyData = () => {
 
+    // data from hourlyWeatherObj global
+
+    let weatherHour = [];
+    let weatherTemp = [];
+    let weatherIcon = [];
+    let weatherRain = [];
+
+    for (let i = 0; i < 12; i++) {
+        // add hour data
+        let timestamp = hourlyWeatherObj[i].hour.split(" ")[1];
+        let hour = Number(timestamp.split(":")[0]);
+
+        if(hour == 0) {                 // midnight
+            timestamp = `${hour + 12}:${timestamp.split(":")[1]}AM`;
+        } else if(hour < 12) {          // morning
+            timestamp += 'AM';
+        } else if (hour === 12) {       // noon
+            timestamp += 'PM';
+        } else {                        // evening
+            timestamp = `${hour - 12}:${timestamp.split(":")[1]}PM`;
+        }
+
+        weatherHour[i] = document.querySelector(`#weather-hour-${i}`);
+        weatherHour[i].innerText = timestamp;
+
+        // add temperature data
+        weatherTemp[i] = document.querySelector(`#weather-temp-${i}`);
+        if(tempState === 'C') {
+            weatherTemp[i].innerText = `${hourlyWeatherObj[i].temp_c}°C`;
+        } else {
+            weatherTemp[i].innerText = `${hourlyWeatherObj[i].temp_f}°F`;
+        }
+
+        // add icons
+        weatherIcon[i] = document.querySelector(`#weather-icon-${i}`);
+        weatherIcon[i].src = hourlyWeatherObj[i].logo;
+
+        // add rain chance
+        weatherRain[i] = document.querySelector(`#weather-rain-${i}`);
+        weatherRain[i].innerText = `Rain: ${hourlyWeatherObj[i].rain}%`
+    }
 }
 
 // append weather data to forecast tab
@@ -369,5 +466,36 @@ let setData = () => {
         setForecastData();
     }
 }
+
+let left = () => {
+    let root = document.querySelector(':root');
+    let index = getComputedStyle(root).getPropertyValue('--index');
+
+    let newIndex;
+
+    if(index > 0) {
+        newIndex = Number(index) - 1;
+    } else {
+        newIndex = Number(index);
+    }
+
+    root.style.setProperty('--index', newIndex);
+}
+
+let right = () => {
+    let root = document.querySelector(':root');
+    let index = getComputedStyle(root).getPropertyValue('--index');
+
+    let newIndex;
+
+    if(index < 9) {
+        newIndex = Number(index) + 1;
+    } else {
+        newIndex = Number(index);
+    }
+
+    root.style.setProperty('--index', newIndex);
+}
+
 
 export { pageInit, setData };

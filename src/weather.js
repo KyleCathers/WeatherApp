@@ -92,8 +92,6 @@ const getHourly = async (location) => {
         parsedHourly.push(filteredHour);
     })
 
-    console.log(parsedHourly);
-
     return parsedHourly;
 }
 
