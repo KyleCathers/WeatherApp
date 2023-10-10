@@ -22,7 +22,7 @@ const getCurrentWeather = async (location) => {
     let feelslike_f = current.feelslike_f;
     let humidity = current.humidity;
     let weather = current.condition.text;
-    let icon = current.condition.icon;
+    let icon = "https:" + current.condition.icon;
     let wind = current.wind_kph;
     let UV = current.uv;
 
@@ -69,7 +69,7 @@ const getForecast = async location => {
                             "high_f" : forecastDay.day.maxtemp_f,
                             "low_c" : forecastDay.day.mintemp_c,
                             "low_f" : forecastDay.day.mintemp_f,
-                            "icon" : forecastDay.day.condition.icon
+                            "icon" : "https:" + forecastDay.day.condition.icon
                         }
 
         parsedForecast.push(parsedDay);
@@ -104,7 +104,7 @@ const getHourly = async (location) => {
                             "hour" : hour.time,
                             "rain" : hour.chance_of_rain,
                             "weather" : hour.condition.text,
-                            "icon" : hour.condition.icon,
+                            "icon" : "https:" + hour.condition.icon,
                             "temp_c" : hour.temp_c,
                             "temp_f" : hour.temp_f
                            };
