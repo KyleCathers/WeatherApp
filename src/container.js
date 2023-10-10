@@ -143,7 +143,6 @@ let pageInit = () => {
         state = 'Hourly';
         middleSection.innerHTML = ""; // kill all children
         middleSection.appendChild(hourlyContent());
-        //console.log(hourlyWeatherObj);
         setHourlyData();
     });
 
@@ -160,7 +159,6 @@ let pageInit = () => {
             currentWeatherObj = await getCurrentWeather(currentLocation);
             hourlyWeatherObj = await getHourly(currentLocation);
             forecastWeatherObj = await getForecast(currentLocation);
-            //console.log(currentWeatherObj)
         } catch (error) {
             alert(`Invalid location`);
             searchInput.value = "";
@@ -268,7 +266,7 @@ let hourlyContent = () => {
     const leftArrowHourly = new Image();
     leftArrowHourly.src = leftArrowIcon;
     leftArrowHourly.setAttribute('id', 'left-arrow-hourly');
-    leftArrowHourly.addEventListener('click', left);
+    leftArrowHourly.addEventListener('click', leftHourly);
 
     const hourlyContent = document.createElement('div');
     hourlyContent.setAttribute('id', 'hourly-content');
@@ -312,9 +310,7 @@ let hourlyContent = () => {
     const rightArrowHourly = new Image();
     rightArrowHourly.src = rightArrowIcon;
     rightArrowHourly.setAttribute('id', 'right-arrow-hourly');
-    rightArrowHourly.addEventListener('click', () => {
-        right('hourly');
-    });
+    rightArrowHourly.addEventListener('click', rightHourly);
 
     hourlyContentWrapper.appendChild(leftArrowHourly);
     hourlyContentWrapper.appendChild(hourlyContent);
@@ -341,7 +337,7 @@ let forecastContent = () => {
     const leftArrowForecast = new Image();
     leftArrowForecast.src = leftArrowIcon;
     leftArrowForecast.setAttribute('id', 'left-arrow-forecast');
-    leftArrowForecast.addEventListener('click', left);
+    leftArrowForecast.addEventListener('click', leftForecast);
 
     const forecastContent = document.createElement('div');
     forecastContent.setAttribute('id', 'forecast-content');
@@ -355,8 +351,8 @@ let forecastContent = () => {
 
     for(let i = 0; i < 8; i++) {
         weatherWrapper[i] = document.createElement('div');
-        weatherWrapper[i].setAttribute('class', 'weather-wrapper');
-        weatherWrapper[i].setAttribute('id', `weather-wrapper-${i}`);
+        weatherWrapper[i].setAttribute('class', 'weather-wrapper-forecast');
+        weatherWrapper[i].setAttribute('id', `weather-wrapper-forecast-${i}`);
 
         weatherDay[i] = document.createElement('div');
         weatherDay[i].setAttribute('class', 'weather-day');
@@ -390,9 +386,7 @@ let forecastContent = () => {
     const rightArrowForecast = new Image();
     rightArrowForecast.src = rightArrowIcon;
     rightArrowForecast.setAttribute('id', 'right-arrow-forecast');
-    rightArrowForecast.addEventListener('click', () => {
-        right('forecast');
-    });
+    rightArrowForecast.addEventListener('click', rightForecast);
 
     forecastContentWrapper.appendChild(leftArrowForecast);
     forecastContentWrapper.appendChild(forecastContent);
@@ -563,9 +557,9 @@ let setData = () => {
     }
 }
 
-let left = () => {
+let leftHourly = () => {
     let root = document.querySelector(':root');
-    let index = getComputedStyle(root).getPropertyValue('--index');
+    let index = getComputedStyle(root).getPropertyValue('--hour-index');
 
     let newIndex;
 
@@ -575,27 +569,52 @@ let left = () => {
         newIndex = Number(index);
     }
 
-    root.style.setProperty('--index', newIndex);
+    root.style.setProperty('--hour-index', newIndex);
 }
 
-let right = (type) => {
+let leftForecast = () => {
     let root = document.querySelector(':root');
-    let index = getComputedStyle(root).getPropertyValue('--index');
+    let index = getComputedStyle(root).getPropertyValue('--forecast-index');
 
     let newIndex;
-    let max = 5;
 
-    if(type === 'hourly') {
-        max = 9;
+    if(index > 0) {
+        newIndex = Number(index) - 1;
+    } else {
+        newIndex = Number(index);
     }
 
-    if(index <= max) {
+    root.style.setProperty('--forecast-index', newIndex);
+}
+
+let rightHourly = (type) => {
+    let root = document.querySelector(':root');
+    let index = getComputedStyle(root).getPropertyValue('--hour-index');
+
+    let newIndex;
+
+    if(index <= 9) {
         newIndex = Number(index) + 1;
     } else {
         newIndex = Number(index);
     }
 
-    root.style.setProperty('--index', newIndex);
+    root.style.setProperty('--hour-index', newIndex);
+}
+
+let rightForecast = (type) => {
+    let root = document.querySelector(':root');
+    let index = getComputedStyle(root).getPropertyValue('--forecast-index');
+
+    let newIndex;
+
+    if(index < 6) {
+        newIndex = Number(index) + 1;
+    } else {
+        newIndex = Number(index);
+    }
+
+    root.style.setProperty('--forecast-index', newIndex);
 }
 
 
