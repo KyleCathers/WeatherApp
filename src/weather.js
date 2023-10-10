@@ -5,6 +5,8 @@
 // https://api.weatherapi.com/v1/current.json
 // https://developers.giphy.com/docs/api/endpoint/
 
+import { format } from 'date-fns';
+
 let weatherKey = 'd2a54b121f6748a786113745233009';
 
 const getCurrentWeather = async (location) => {
@@ -50,17 +52,37 @@ const getForecast = async location => {
 
     console.log(forecast);
 
-    return parseForecast(forecast);
-}
+    let parsedForecast = [];
 
-const parseForecast = forecast => {
+    forecast.forEach((forecastDay) => {
+        // day of the week, date (month/day), high F/C, low F/C, weather icon
+        let year = Number(forecastDay.date.slice(0, 4));    // e.g. 2023
+        let month = Number(forecastDay.date.slice(5,7));    // e.g. 10
+        let day = Number(forecastDay.date.slice(8, 10));    // e.g. 5
 
-    let parsedForecast = forecast;
+        let dayName = format(new Date(year, month - 1, day), 'EEEE');
+        let monthName = format(new Date(year, month - 1, day), 'LLL');
 
-    //console.log(parsedForecast);
+        //console.log(dayName, monthName, day);
+
+        let parsedDay = {
+                            "day" : dayName,
+                            "date" : `${monthName} ${day}`,
+                            "high_c" : forecastDay.day.maxtemp_c,
+                            "high_f" : forecastDay.day.maxtemp_f,
+                            "high_c" : forecastDay.day.maxtemp_c,
+                            "low_f" : forecastDay.day.maxtemp_f,
+                            "icon" : forecastDay.day.condition.icon
+                        }
+
+        parsedForecast.push(parsedDay);
+    })
+
+    console.log(parsedForecast);
 
     return parsedForecast;
 }
+
 
 const getHourly = async (location) => {
     // get current hour

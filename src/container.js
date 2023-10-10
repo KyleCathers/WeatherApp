@@ -9,6 +9,7 @@ let currentLocation = 'Vancouver';
 
 let currentWeatherObj = await getCurrentWeather(currentLocation);
 let hourlyWeatherObj = await getHourly(currentLocation);
+let forecastWeatherObj = await getForecast(currentLocation);
 
 let pageInit = () => {
 
@@ -142,7 +143,7 @@ let pageInit = () => {
         state = 'Hourly';
         middleSection.innerHTML = ""; // kill all children
         middleSection.appendChild(hourlyContent());
-        console.log(hourlyWeatherObj);
+        //console.log(hourlyWeatherObj);
         setHourlyData();
     });
 
@@ -158,7 +159,8 @@ let pageInit = () => {
         try {
             currentWeatherObj = await getCurrentWeather(currentLocation);
             hourlyWeatherObj = await getHourly(currentLocation);
-            console.log(currentWeatherObj)
+            forecastWeatherObj = await getForecast(currentLocation);
+            //console.log(currentWeatherObj)
         } catch (error) {
             alert(`Invalid location`);
             searchInput.value = "";
@@ -193,6 +195,7 @@ let pageInit = () => {
             try {
                 currentWeatherObj = await getCurrentWeather(currentLocation);
                 hourlyWeatherObj = await getHourly(currentLocation);
+                forecastWeatherObj = await getForecast(currentLocation);
             } catch (error) {
                 alert(`Invalid location`);
                 searchInput.value = "";
@@ -488,7 +491,7 @@ let right = () => {
 
     let newIndex;
 
-    if(index < 9) {
+    if(index <= 9) {
         newIndex = Number(index) + 1;
     } else {
         newIndex = Number(index);

@@ -24,7 +24,7 @@ body {
 
 #container {
   background-color: #ffffff;
-  width: 700px;
+  width: 750px;
   height: clamp(600px, 80%, 850px);
   border-radius: 20px;
   box-sizing: border-box;
