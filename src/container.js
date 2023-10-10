@@ -265,10 +265,10 @@ let hourlyContent = () => {
     const hourlyContentWrapper = document.createElement('div');
     hourlyContentWrapper.setAttribute('id', 'hourly-content-wrapper');
 
-    const leftArrow = new Image();
-    leftArrow.src = leftArrowIcon;
-    leftArrow.setAttribute('id', 'left-arrow');
-    leftArrow.addEventListener('click', left);
+    const leftArrowHourly = new Image();
+    leftArrowHourly.src = leftArrowIcon;
+    leftArrowHourly.setAttribute('id', 'left-arrow-hourly');
+    leftArrowHourly.addEventListener('click', left);
 
     const hourlyContent = document.createElement('div');
     hourlyContent.setAttribute('id', 'hourly-content');
@@ -309,14 +309,16 @@ let hourlyContent = () => {
         hourlyContent.appendChild(weatherWrapper[i]);
     }
 
-    const rightArrow = new Image();
-    rightArrow.src = rightArrowIcon;
-    rightArrow.setAttribute('id', 'right-arrow');
-    rightArrow.addEventListener('click', right);
+    const rightArrowHourly = new Image();
+    rightArrowHourly.src = rightArrowIcon;
+    rightArrowHourly.setAttribute('id', 'right-arrow-hourly');
+    rightArrowHourly.addEventListener('click', () => {
+        right('hourly');
+    });
 
-    hourlyContentWrapper.appendChild(leftArrow);
+    hourlyContentWrapper.appendChild(leftArrowHourly);
     hourlyContentWrapper.appendChild(hourlyContent);
-    hourlyContentWrapper.appendChild(rightArrow);
+    hourlyContentWrapper.appendChild(rightArrowHourly);
 
     middleContainer.appendChild(title);
     middleContainer.appendChild(hourlyContentWrapper);
@@ -333,7 +335,71 @@ let forecastContent = () => {
     title.innerText = 'Forecast';
     title.setAttribute('id', 'title');
 
+    const forecastContentWrapper = document.createElement('div');
+    forecastContentWrapper.setAttribute('id', 'forecast-content-wrapper');
+
+    const leftArrowForecast = new Image();
+    leftArrowForecast.src = leftArrowIcon;
+    leftArrowForecast.setAttribute('id', 'left-arrow-forecast');
+    leftArrowForecast.addEventListener('click', left);
+
+    const forecastContent = document.createElement('div');
+    forecastContent.setAttribute('id', 'forecast-content');
+
+    let weatherWrapper = [];
+    let weatherDay = [];
+    let weatherDate = [];
+    let weatherHigh = [];
+    let weatherLow = [];
+    let weatherIcon = [];
+
+    for(let i = 0; i < 8; i++) {
+        weatherWrapper[i] = document.createElement('div');
+        weatherWrapper[i].setAttribute('class', 'weather-wrapper');
+        weatherWrapper[i].setAttribute('id', `weather-wrapper-${i}`);
+
+        weatherDay[i] = document.createElement('div');
+        weatherDay[i].setAttribute('class', 'weather-day');
+        weatherDay[i].setAttribute('id', `weather-day-${i}`);
+
+        weatherDate[i] = document.createElement('div');
+        weatherDate[i].setAttribute('class', 'weather-date');
+        weatherDate[i].setAttribute('id', `weather-date-${i}`);
+
+        weatherHigh[i] = document.createElement('div');
+        weatherHigh[i].setAttribute('class', 'weather-high');
+        weatherHigh[i].setAttribute('id', `weather-high-${i}`);
+
+        weatherLow[i] = document.createElement('div');
+        weatherLow[i].setAttribute('class', 'weather-low');
+        weatherLow[i].setAttribute('id', `weather-low-${i}`);
+
+        weatherIcon[i] = new Image();
+        weatherIcon[i].setAttribute('class', 'weather-icon');
+        weatherIcon[i].setAttribute('id', `weather-icon-${i}`);
+
+        weatherWrapper[i].appendChild(weatherDay[i]);
+        weatherWrapper[i].appendChild(weatherDate[i]);
+        weatherWrapper[i].appendChild(weatherHigh[i]);
+        weatherWrapper[i].appendChild(weatherLow[i]);
+        weatherWrapper[i].appendChild(weatherIcon[i]);
+
+        forecastContent.appendChild(weatherWrapper[i]);
+    }
+
+    const rightArrowForecast = new Image();
+    rightArrowForecast.src = rightArrowIcon;
+    rightArrowForecast.setAttribute('id', 'right-arrow-forecast');
+    rightArrowForecast.addEventListener('click', () => {
+        right('forecast');
+    });
+
+    forecastContentWrapper.appendChild(leftArrowForecast);
+    forecastContentWrapper.appendChild(forecastContent);
+    forecastContentWrapper.appendChild(rightArrowForecast);
+
     middleContainer.appendChild(title);
+    middleContainer.appendChild(forecastContentWrapper);
 
     return middleContainer;
 }
@@ -375,6 +441,11 @@ let setHourlyData = () => {
     let weatherRain = [];
 
     for (let i = 0; i < 12; i++) {
+        weatherHour[i] = document.querySelector(`#weather-hour-${i}`);
+        weatherTemp[i] = document.querySelector(`#weather-temp-${i}`);
+        weatherIcon[i] = document.querySelector(`#weather-icon-${i}`);
+        weatherRain[i] = document.querySelector(`#weather-rain-${i}`);
+
         // add hour data
         let timestamp = hourlyWeatherObj[i].hour.split(" ")[1];
         let hour = Number(timestamp.split(":")[0]);
@@ -389,11 +460,9 @@ let setHourlyData = () => {
             timestamp = `${hour - 12}:${timestamp.split(":")[1]}PM`;
         }
 
-        weatherHour[i] = document.querySelector(`#weather-hour-${i}`);
         weatherHour[i].innerText = timestamp;
 
         // add temperature data
-        weatherTemp[i] = document.querySelector(`#weather-temp-${i}`);
         if(tempState === 'C') {
             weatherTemp[i].innerText = `${hourlyWeatherObj[i].temp_c}°C`;
         } else {
@@ -401,18 +470,42 @@ let setHourlyData = () => {
         }
 
         // add icons
-        weatherIcon[i] = document.querySelector(`#weather-icon-${i}`);
-        weatherIcon[i].src = hourlyWeatherObj[i].logo;
-
+        weatherIcon[i].src = hourlyWeatherObj[i].icon;
         // add rain chance
-        weatherRain[i] = document.querySelector(`#weather-rain-${i}`);
         weatherRain[i].innerText = `Rain: ${hourlyWeatherObj[i].rain}%`
     }
 }
 
 // append weather data to forecast tab
 let setForecastData = () => {
+    let weatherDay = [];
+    let weatherDate = [];
+    let weatherHigh = [];
+    let weatherLow = [];
+    let weatherIcon = [];
 
+    for (let i = 0; i < 8; i++) {
+        //forecastWeatherObj
+        weatherDay[i] = document.querySelector(`#weather-day-${i}`);
+        weatherDate[i] = document.querySelector(`#weather-date-${i}`);
+        weatherHigh[i] = document.querySelector(`#weather-high-${i}`);
+        weatherLow[i] = document.querySelector(`#weather-low-${i}`);
+        weatherIcon[i] = document.querySelector(`#weather-icon-${i}`);
+
+        weatherDay[i].innerText = forecastWeatherObj[i].day;
+        weatherDate[i].innerText = forecastWeatherObj[i].date;
+
+        if(tempState === 'C') {
+            weatherHigh[i].innerText = `High: ${forecastWeatherObj[i].high_c}°C`;
+            weatherLow[i].innerText = `Low: ${forecastWeatherObj[i].low_c}°C`;
+        } else {
+            weatherHigh[i].innerText = `High: ${forecastWeatherObj[i].high_f}°F`;
+            weatherLow[i].innerText = `Low: ${forecastWeatherObj[i].low_f}°F`;
+        }
+
+        weatherIcon[i].src = forecastWeatherObj[i].icon;
+        
+    }
 }
 
 // append location data to header
@@ -485,13 +578,18 @@ let left = () => {
     root.style.setProperty('--index', newIndex);
 }
 
-let right = () => {
+let right = (type) => {
     let root = document.querySelector(':root');
     let index = getComputedStyle(root).getPropertyValue('--index');
 
     let newIndex;
+    let max = 5;
 
-    if(index <= 9) {
+    if(type === 'hourly') {
+        max = 9;
+    }
+
+    if(index <= max) {
         newIndex = Number(index) + 1;
     } else {
         newIndex = Number(index);

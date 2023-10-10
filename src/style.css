@@ -98,29 +98,29 @@ body {
   flex: 1 1 auto;
 }
 
-#middle-container-today {
+#middle-container-today,
+#middle-container-hourly,
+#middle-container-forecast {
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+#middle-container-today {
   font-size: 1.3rem;
 }
 
-#middle-container-hourly {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-#hourly-content-wrapper {
+#hourly-content-wrapper,
+#forecast-content-wrapper {
   display: flex;
   height: 100%;
   width: 100%;
   align-items: center;
 }
 
-#hourly-content {
+#hourly-content,
+#forecast-content {
   display: flex;
   max-width: 100%;
   height: 100%;
@@ -144,16 +144,25 @@ body {
   width: 100px;
 }
 
-#left-arrow,
-#right-arrow {
+.weather-high,
+.weather-low {
+  font-size: 1.3rem;
+}
+
+#left-arrow-hourly,
+#right-arrow-hourly,
+#left-arrow-forecast,
+#right-arrow-forecast {
   height: 100px;
   width: 80px;
   cursor: pointer;
   transition: all ease-in-out 0.3s;
 }
 
-#left-arrow:hover,
-#right-arrow:hover {
+#left-arrow-hourly:hover,
+#right-arrow-hourly:hover,
+#left-arrow-forecast:hover,
+#right-arrow-forecast:hover {
   transform: scale(1.1);
 }
 

@@ -11,13 +11,10 @@ let weatherKey = 'd2a54b121f6748a786113745233009';
 
 const getCurrentWeather = async (location) => {
     let response = await fetch(`https://api.weatherapi.com/v1/current.json?key=${weatherKey}&q=${location}`);
-    let data = await response.json();
-    return parseCurrentWeather(data);
-}
-
-const parseCurrentWeather = dataObject => {
+    let dataObject = await response.json();
+    
     let current = dataObject.current;
-    let location = dataObject.location;
+    let loc = dataObject.location;
 
     let temp_c = current.temp_c;
     let temp_f = current.temp_f;
@@ -30,10 +27,10 @@ const parseCurrentWeather = dataObject => {
     let UV = current.uv;
 
     
-    let country = location.country;
-    let time = location.localtime; // "2023-10-01 16:39"
-    let city = location.name;
-    let region = location.region; // province, state ...
+    let country = loc.country;
+    let time = loc.localtime; // "2023-10-01 16:39"
+    let city = loc.name;
+    let region = loc.region; // province, state ...
 
     let parsedData = { temp_c, temp_f, feelslike_c, feelslike_f, humidity, weather, icon, 
         wind, UV, country, time, city, region };
@@ -50,7 +47,7 @@ const getForecast = async location => {
 
     let forecast = data.forecast.forecastday;
 
-    console.log(forecast);
+    //console.log(forecast);
 
     let parsedForecast = [];
 
@@ -66,12 +63,12 @@ const getForecast = async location => {
         //console.log(dayName, monthName, day);
 
         let parsedDay = {
-                            "day" : dayName,
                             "date" : `${monthName} ${day}`,
+                            "day" : dayName,
                             "high_c" : forecastDay.day.maxtemp_c,
                             "high_f" : forecastDay.day.maxtemp_f,
-                            "high_c" : forecastDay.day.maxtemp_c,
-                            "low_f" : forecastDay.day.maxtemp_f,
+                            "low_c" : forecastDay.day.mintemp_c,
+                            "low_f" : forecastDay.day.mintemp_f,
                             "icon" : forecastDay.day.condition.icon
                         }
 
@@ -107,7 +104,7 @@ const getHourly = async (location) => {
                             "hour" : hour.time,
                             "rain" : hour.chance_of_rain,
                             "weather" : hour.condition.text,
-                            "logo" : hour.condition.icon,
+                            "icon" : hour.condition.icon,
                             "temp_c" : hour.temp_c,
                             "temp_f" : hour.temp_f
                            };
