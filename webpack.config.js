@@ -16,7 +16,7 @@ module.exports = {
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
-    clean: true,
+    clean: true
   },
   module: {
     rules: [
@@ -33,5 +33,8 @@ module.exports = {
         type: "asset/resource",
       },
     ],
+  },
+  optimization: {
+    runtimeChunk: 'single',
   },
 };

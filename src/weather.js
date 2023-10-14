@@ -40,9 +40,9 @@ const getCurrentWeather = async (location) => {
     return parsedData;
 }
 
-// 7 day forecast
+// 3 day forecast
 const getForecast = async location => {
-    let response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${weatherKey}&q=${location}&days=8`);
+    let response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${weatherKey}&q=${location}&days=3`);
     let data = await response.json();
 
     let forecast = data.forecast.forecastday;

@@ -1,8 +1,6 @@
 :root {
   --hour-width: 195px;
-  --forecast-width: 195px;
   --hour-index: 0;
-  --forecast-index: 0;
 }
 
 body, html {
@@ -113,21 +111,26 @@ body {
   font-size: 1.3rem;
 }
 
-#hourly-content-wrapper,
-#forecast-content-wrapper {
+#hourly-content-wrapper {
   display: flex;
   height: 100%;
   width: 100%;
   align-items: center;
 }
 
-#hourly-content,
-#forecast-content {
+#hourly-content {
   display: flex;
   max-width: 100%;
   height: 100%;
   overflow: hidden;
   position: relative;
+}
+
+#forecast-content {
+  display: flex;
+  max-width: 100%;
+  height: 100%;
+  gap: 40px;
 }
 
 .weather-wrapper,
@@ -144,11 +147,6 @@ body {
 .weather-wrapper {
   flex: 0 0 var(--hour-width);
   right: calc(var(--hour-index)*var(--hour-width));
-}
-
-.weather-wrapper-forecast {
-  flex: 0 0 var(--forecast-width);
-  right: calc(var(--forecast-index)*var(--forecast-width));
 }
 
 .weather-icon {
